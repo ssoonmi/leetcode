@@ -1,5 +1,3 @@
-// https://leetcode.com/problems/dota2-senate/
-
 /**
  * @param {string} senate
  * @return {string}
@@ -41,15 +39,22 @@ var predictPartyVictory = function(senate) {
     }
 };
 
-
-// "DRRDRDRDRDDRDRDR"
-// prevD = 0
-// prevR = 2
-// "DRRRRDDD"
-// "DRRRRDDD"
-// "DRRR"
-// "DRRR"
-// "DRR"
-// "DRR"
-// "RR"
-// "RR"
+// Greedy solution
+var predictPartyVictory = function(senate) {
+    const rIdxs = [];
+    const dIdxs = [];
+    for (let i = 0; i < senate.length; i++) {
+        if (senate[i] === 'R') rIdxs.push(i);
+        else dIdxs.push(i);
+    }
+    while (rIdxs.length && dIdxs.length) {
+        if (rIdxs[0] < dIdxs[0]) {
+            dIdxs.shift()
+            rIdxs.push(rIdxs.shift() + senate.length);
+        } else {
+            rIdxs.shift()
+            dIdxs.push(dIdxs.shift() + senate.length);
+        }
+    }
+    return rIdxs.length ? 'Radiant' : 'Dire';
+};
