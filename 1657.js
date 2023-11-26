@@ -4,37 +4,39 @@
  * @return {boolean}
  */
 var closeStrings = function(word1, word2) {
-    function countChars (count, char) {
-        if (!(char in count)) count[char] = 0
-        count[char]++
-        return count
+    const count1 = {};
+    const count2 = {};
+    if (word1.length !== word2.length) return false;
+    for (let i = 0; i < word1.length; i++) {
+        if (!(word1[i] in count1)) count1[word1[i]] = 0;
+        if (!(word2[i] in count2)) count2[word2[i]] = 0;
+        count1[word1[i]]++;
+        count2[word2[i]]++;
     }
-    const count1 = word1.split('').reduce(countChars, {})
-    const count2 = word2.split('').reduce(countChars, {})
-    for (let char in count1) {
-        const count = count1[char]
-        if (count2[char] === count) {
-            delete count2[char]
-            delete count1[char]
-        }
-    }
-    const chars1 = Object.keys(count1)
-    const chars2 = Object.keys(count2)
-    if (chars1.length === 0 && chars2.length === 0) return true
-    if (chars1.length !== chars2.length) return false
-    for (let char in count1) {
-        if (!(char in count2)) return false
-    }
-    const freq = Object.values(count1).reduce(countChars, {})
-    for (let char in count2) {
-        const count = count2[char]
-        if (count in freq) {
-            delete count
-            freq[count]--
-            if (freq[count] === 0) {
-                delete freq[count]
+    const keys1 = Object.keys(count1);
+    const keys2 = Object.keys(count2);
+    const numValues = {};
+    if (keys1.length !== keys2.length) return false;
+    for (let i = 0; i < keys1.length; i++) {
+        if (!(keys1[i] in count2)) return false;
+        const val1 = count1[keys1[i]];
+        const val2 = count2[keys1[i]];
+        if (val1 !== val2) {
+            if (!(val1 in numValues)) {
+                numValues[val1] = 0;
+            }
+            if (!(val2 in numValues)) {
+                numValues[val2] = 0;
+            }
+            numValues[val1]++;
+            numValues[val2]--;
+            if (numValues[val2] === 0) {
+                delete numValues[val2];
+            }
+            if (numValues[val1] === 0) {
+                delete numValues[val1];
             }
         }
     }
-    return Object.keys(freq).length === 0
+    return Object.keys(numValues).length === 0;
 };
