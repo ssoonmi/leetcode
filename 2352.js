@@ -3,25 +3,24 @@
  * @return {number}
  */
 var equalPairs = function(grid) {
-    const cols = []
-    const rows = grid
-    for (let row in grid) {
-        for (let col in grid[row]) {
-            if (!(col in cols)) cols[col] = []
-            cols[col].push(grid[row][col])
+    const cols = [];
+    for (let rowI = 0; rowI < grid.length; rowI++) {
+        const row = grid[rowI];
+        for (let colI = 0; colI < row.length; colI++) {
+            if (!(colI in cols)) cols.push([]);
+            cols[colI].push(row[colI]);
         }
     }
-    let numMatches = 0
-    for (let col of cols) {
-        let i = 0
-        for (let row of rows) {
-            i = 0
-            while (i < cols.length) {
-                if (col[i] !== row[i]) break
-                i++
+    let res = 0;
+    for (let rowI = 0; rowI < grid.length; rowI++) {
+        const row = grid[rowI];
+        for (let colI = 0; colI < cols.length; colI++) {
+            const col = cols[colI];
+            for (let i = 0; i < row.length; i++) {
+                if (row[i] !== col[i]) break;
+                if (i === row.length - 1) res++;
             }
-            if (i === cols.length) numMatches++
         }
     }
-    return numMatches
+    return res;
 };
