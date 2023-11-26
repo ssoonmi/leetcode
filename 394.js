@@ -1,39 +1,25 @@
-/*
-3[a]2[bc] // 3[a], 2[bc]
-3[a2[c]] // 3[a, 2[c]]
-2[abc]3[cd]ef // 2[abc], 3[cd], ef
-*/
-
-
 /**
  * @param {string} s
  * @return {string}
  */
-const decodeString = function(s, i = 0, j = s.length) {
-    let res = ''
-    let numStr = ''
-    const stack = []
-    while (i < j) {
+var decodeString = function(s) {
+    const stack = [{ str: '' }];
+    let numStr = '';
+    let i = 0;
+    while (i < s.length) {
         if (s[i] === '[') {
-            let k = i + 1
-            stack.push(i)
-            while (stack.length) {
-                if (s[k] === '[') stack.push(k)
-                if (s[k] === ']') stack.pop()
-                k++
-            }
-            const nestedStr = decodeString(s, i + 1, k)
-            i = k - 1
-            const num = Number(numStr)
-            numStr = ''
-            res += nestedStr.repeat(num)
+            stack[stack.length - 1].num = Number(numStr);
+            numStr = '';
         } else if (s[i] === ']') {
+            const { num, str } = stack.pop();
+            stack[stack.length - 1].str += str.repeat(num);
+        } else if (!isNaN(s[i])) {
+            if (!numStr) stack.push({ str: '' });
+            numStr += s[i];
         } else if (isNaN(s[i])) {
-            res += s[i]
-        } else {
-            numStr += s[i]
+            stack[stack.length - 1].str += s[i];
         }
-        i++
+        i++;
     }
-    return res
+    return stack[0].str;
 };
