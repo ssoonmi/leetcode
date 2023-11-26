@@ -3,19 +3,17 @@
  * @return {boolean}
  */
 var increasingTriplet = function(nums) {
-    const stack = [];
+    const stack = [Infinity, Infinity];
     let i = 0;
     while (i < nums.length) {
-        let j = stack.length - 1
-        if (!stack.length || nums[i] > stack[j]) stack.push(nums[i]);
-        else {
-            while (j >= 0 && stack[j - 1] >= nums[i]) {
-                j--;
-            }
-            stack[j] = nums[i];
+        const num = nums[i];
+        if (num > stack[1] && num > stack[0]) return true;
+        if (nums[i] > stack[0]) {
+            stack[1] = nums[i];
+        } else {
+            stack[0] = nums[i];
         }
-        if (stack.length === 3) return true;
         i++;
     }
-    return stack.length === 3;
+    return false;
 };
