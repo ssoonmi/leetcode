@@ -1,6 +1,6 @@
 
 var RecentCounter = function() {
-    this.requests = []
+    this.requests = [];
 };
 
 /** 
@@ -8,12 +8,11 @@ var RecentCounter = function() {
  * @return {number}
  */
 RecentCounter.prototype.ping = function(t) {
-    this.requests.push(t)
-    // It is guaranteed that every call to ping uses a strictly larger value of t than the previous call.
-    while (this.requests.length && this.requests[0] < t - 3000) {
-        this.requests.shift()
+    while (this.requests[0] < t - 3000 || this.requests[0] > t) {
+        this.requests.shift();
     }
-    return this.requests.length
+    this.requests.push(t);
+    return this.requests.length;
 };
 
 /** 
