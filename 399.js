@@ -1,32 +1,19 @@
-const traverse = function(graph, a, b, memo = {}, visiting = new Set()) {
-    const key = `${a}-${b}`;
-    if (key in memo) return memo[key];
-    let resValue = null;
-    for (const neighbor of graph[a]) {
-        const [c, value] = neighbor;
-        if (c === b) {
-            resValue = value;
-            memo[key] = resValue;
-            return resValue;
+const calcValue = function(graph, a, b, visited = new Set()) {
+    if (!(a in graph) || !(b in graph)) return -1;
+    if (visited.has(a)) return -1;
+    visited.add(a);
+    if (a in graph && b in graph[a]) return graph[a][b];
+    for (const c in graph[a]) {
+        let value = calcValue(graph, c, b, visited);
+        if (value !== -1) {
+            value = value * graph[a][c];
+            graph[a][b] = value;
+            graph[b][a] = 1 / value;
+            return value;
         }
     }
-    if (visiting.has(a)) {
-        memo[key] = resValue;
-        return resValue;
-    }
-    visiting.add(a);
-    for (const neighbor of graph[a]) {
-        const [c, value] = neighbor;
-        resValue = traverse(graph, c, b, memo, visiting);
-        if (resValue !== null) {
-            resValue *= value;
-            memo[key] = resValue;
-            return resValue;
-        }
-    }
-    visiting.delete(a);
-    return resValue;
-}
+    return -1;
+};
 
 /**
  * @param {string[][]} equations
@@ -36,29 +23,19 @@ const traverse = function(graph, a, b, memo = {}, visiting = new Set()) {
  */
 var calcEquation = function(equations, values, queries) {
     const graph = {};
-    for (const idx in equations) {
-        const [a, b] = equations[idx];
-        const value = values[idx];
-        if (!(a in graph)) graph[a] = [];
-        if (!(b in graph)) graph[b] = [];
-        graph[a].push([b, value]);
-        graph[b].push([a, 1 / value]);
+    for (const i in equations) {
+        const value = values[i];
+        const [a, b] = equations[i];
+        if (!(a in graph)) graph[a] = {};
+        if (!(b in graph)) graph[b] = {};
+        graph[a][b] = value;
+        graph[b][a] = 1 / value;
     }
+
     const res = [];
-    const memo = {};
-    for (const query of queries) {
-        const [a, b] = query;
-        if (a === b && (a in graph || b in graph)) {
-            res.push(1);
-            continue;
-        }
-        if (!(a in graph && b in graph)) {
-            res.push(-1);
-            continue;
-        }
-        const resValue = traverse(graph, a, b, memo);
-        if (resValue === null) res.push(-1);
-        else res.push(resValue);
+    for (const i in queries) {
+        const [a, b] = queries[i];
+        res.push(calcValue(graph, a, b));
     }
     return res;
 };
