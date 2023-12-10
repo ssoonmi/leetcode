@@ -1,28 +1,13 @@
-const canReachCityB = function (cityA, cityB, graph, directedGraph, visited, visiting = new Set()) {
-    if (visited.has(cityA)) return 0;
-    if (cityA === cityB) return 0;
-    visiting.add(cityA);
-    if (!(cityA in graph)) return 0;
-    let numChanges = 0;
-    for (const neighbor of graph[cityA]) {
-        if (visiting.has(neighbor)) continue;
-        if (neighbor === cityB) {
-            visited.add(cityA);
-            return 0;
-        }
-        const originalChanges = numChanges;
-        numChanges += canReachCityB(neighbor, cityB, graph, directedGraph, visited, visiting);
-        if (numChanges !== originalChanges) visited.add(cityA);
-        else if (directedGraph) {
-            if (!(cityA in directedGraph)) directedGraph[cityA] = [];
-            directedGraph[cityA].push(cityB);
-            visited.add(cityA);
-            numChanges++;
-        }
+const dfs = (graph, a, visited) => {
+    let numReorders = 0;
+    for (const neighbor in graph[a]) {
+        if (visited.has(neighbor)) continue;
+        if (!graph[neighbor][a]) numReorders++;
+        visited.add(neighbor);
+        numReorders += dfs(graph, neighbor, visited);
     }
-    visiting.delete(cityA);
-    return numChanges;
-}
+    return numReorders;
+};
 
 /**
  * @param {number} n
@@ -30,26 +15,29 @@ const canReachCityB = function (cityA, cityB, graph, directedGraph, visited, vis
  * @return {number}
  */
 var minReorder = function(n, connections) {
-    let numChanges = 0;
-    const directed = {};
-    const reverseDirected = {};
-    const visited = new Set();
-    for (const [a, b] of connections) {
-        if (b === 0) visited.add(a);
-        if (!(a in directed)) directed[a] = [];
-        directed[a].push(b);
-        if (!(b in reverseDirected)) reverseDirected[b] = [];
-        reverseDirected[b].push(a);
+    const graph = {};
+    for (let [a, b] of connections) {
+        a = a.toString();
+        b = b.toString();
+        if (!(a in graph)) graph[a] = {};
+        if (!(b in graph)) graph[b] = {};
+        graph[a][b] = true;
+        graph[b][a] = false;
     }
-    while (visited.size !== n - 1) {
-        console.log(visited)
-        console.log(directed)
-        console.log(numChanges)
-        for (let a = 1; a < n; a++) {
-            if (visited.has(a)) continue;
-            if (canReachCityB(a, 0, directed, null, visited)) continue;
-            numChanges += canReachCityB(a, 0, reverseDirected, directed, visited);
+
+    const visited = new Set();
+    visited.add('0');
+    let numReorders = 0;
+    const queue = ['0'];
+    while (queue.length) {
+        const city = queue.shift();
+        for (const neighbor in graph[city]) {
+            if (visited.has(neighbor)) continue;
+            if (!graph[neighbor][city]) numReorders++;
+            visited.add(neighbor);
+            queue.push(neighbor);
         }
     }
-    return numChanges;
+    return numReorders;
+    // return dfs(graph, '0', visited);
 };
