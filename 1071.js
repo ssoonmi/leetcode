@@ -4,27 +4,24 @@
  * @return {string}
  */
 var gcdOfStrings = function(str1, str2) {
-    let maxStr = str1;
-    let minStr = str2;
-    if (maxStr.length < minStr.length) {
-        minStr = str1;
-        maxStr = str2;
-    }
-    if (minStr.length === maxStr.length) return minStr === maxStr ? minStr : '';
-    let parts = minStr.length;
-    while (parts > 0) {
-        if (minStr.length % parts === 0 && maxStr.length % parts === 0) {
-            let i = 0;
-            let str = "";
-            while (i < maxStr.length) {
-                if (i < parts) str += minStr[i];
-                if (i < minStr.length && minStr[i] !== str[i % parts]) break;
-                if (maxStr[i] !== str[i % parts]) break;
-                i++;
-            }
-            if (i === maxStr.length) return str;
+    let maxLength = Math.max(str1.length, str2.length);
+    let prefix = Math.min(str1.length, str2.length) === str1.length ? str1 : str2;
+    let prefixMaxLength = prefix.length;
+    while (prefixMaxLength >= 1) {
+        while (str1.length % prefixMaxLength !== 0 || str2.length % prefixMaxLength !== 0) {
+            prefixMaxLength--;
         }
-        parts--;
+        let i = 0;
+        while (i < maxLength) {
+            if (
+                (i >= str1.length || prefix[i % prefixMaxLength] === str1[i]) &&
+                (i >= str2.length || prefix[i % prefixMaxLength] === str2[i])
+            ) {
+                i++;
+            } else break;
+            if (i === maxLength) return prefix.slice(0, prefixMaxLength);
+        }
+        prefixMaxLength--;
     }
-    return "";
+    return '';
 };
