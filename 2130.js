@@ -10,17 +10,17 @@
  * @return {number}
  */
 var pairSum = function(head) {
-    const stack = [];
+    const values = [];
     let node = head;
     while (node) {
-        stack.push(node);
+        values.push(node.val);
         node = node.next;
     }
     let i = 0;
-    const mid = Math.floor(stack.length / 2);
+    const mid = Math.floor(values.length / 2);
     let maxSum = -Infinity;
     while (i < mid) {
-        maxSum = Math.max(maxSum, stack[i].val + stack[stack.length - 1 - i].val);
+        maxSum = Math.max(maxSum, values[i] + values[values.length - 1 - i]);
         i++;
     }
     return maxSum;
