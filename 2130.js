@@ -10,26 +10,18 @@
  * @return {number}
  */
 var pairSum = function(head) {
-    if (!head) return head;
+    const stack = [];
     let node = head;
-    let maxSum = -Infinity;
-    const vals = {};
-    let length = 0;
     while (node) {
-        length++;
+        stack.push(node);
         node = node.next;
     }
-    node = head;
     let i = 0;
-    while (node) {
-        const j = length - 1 - i;
-        if (j in vals) {
-            maxSum = Math.max(maxSum, Number(vals[j]) + node.val);
-        }
-        vals[i] = node.val;
+    const mid = Math.floor(stack.length / 2);
+    let maxSum = -Infinity;
+    while (i < mid) {
+        maxSum = Math.max(maxSum, stack[i].val + stack[stack.length - 1 - i].val);
         i++;
-        node = node.next;
     }
-    if (maxSum === -Infinity) return 0;
     return maxSum;
 };
