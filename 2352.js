@@ -3,24 +3,20 @@
  * @return {number}
  */
 var equalPairs = function(grid) {
-    const cols = [];
-    for (let rowI = 0; rowI < grid.length; rowI++) {
-        const row = grid[rowI];
-        for (let colI = 0; colI < row.length; colI++) {
-            if (!(colI in cols)) cols.push([]);
-            cols[colI].push(row[colI]);
-        }
+    let pairs = 0;
+    const rows = {};
+    for (const row in grid) {
+        const sRow = JSON.stringify(grid[row]);
+        if (!(sRow in rows)) rows[sRow] = 0;
+        rows[sRow]++;
     }
-    let res = 0;
-    for (let rowI = 0; rowI < grid.length; rowI++) {
-        const row = grid[rowI];
-        for (let colI = 0; colI < cols.length; colI++) {
-            const col = cols[colI];
-            for (let i = 0; i < row.length; i++) {
-                if (row[i] !== col[i]) break;
-                if (i === row.length - 1) res++;
-            }
+    for (const col in grid[0]) {
+        const aCol = [];
+        for (const row in grid) {
+            aCol.push(grid[row][col]);
         }
+        const sCol = JSON.stringify(aCol);
+        if (sCol in rows) pairs += rows[sCol];
     }
-    return res;
+    return pairs;
 };
