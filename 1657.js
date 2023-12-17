@@ -4,39 +4,45 @@
  * @return {boolean}
  */
 var closeStrings = function(word1, word2) {
-    const count1 = {};
-    const count2 = {};
-    if (word1.length !== word2.length) return false;
-    for (let i = 0; i < word1.length; i++) {
-        if (!(word1[i] in count1)) count1[word1[i]] = 0;
-        if (!(word2[i] in count2)) count2[word2[i]] = 0;
-        count1[word1[i]]++;
-        count2[word2[i]]++;
+    let numChars1 = 0;
+    const freq1 = {};
+    for (const char of word1) {
+        if (!(char in freq1)) {
+            freq1[char] = 0;
+            numChars1++;
+        }
+        freq1[char]++;
     }
-    const keys1 = Object.keys(count1);
-    const keys2 = Object.keys(count2);
-    const numValues = {};
-    if (keys1.length !== keys2.length) return false;
-    for (let i = 0; i < keys1.length; i++) {
-        if (!(keys1[i] in count2)) return false;
-        const val1 = count1[keys1[i]];
-        const val2 = count2[keys1[i]];
-        if (val1 !== val2) {
-            if (!(val1 in numValues)) {
-                numValues[val1] = 0;
-            }
-            if (!(val2 in numValues)) {
-                numValues[val2] = 0;
-            }
-            numValues[val1]++;
-            numValues[val2]--;
-            if (numValues[val2] === 0) {
-                delete numValues[val2];
-            }
-            if (numValues[val1] === 0) {
-                delete numValues[val1];
-            }
+    let numChars2 = 0;
+    const freq2 = {};
+    for (const char of word2) {
+        if (!(char in freq1)) return false;
+        if (!(char in freq2)) {
+            freq2[char] = 0;
+            numChars2++;
+        }
+        freq2[char]++;
+    }
+    if (numChars1 !== numChars2) return false;
+    const otherFreq = {};
+    let checkFreq = false;
+    for (const char in freq1) {
+        if (char in freq2 && freq1[char] === freq2[char]) {
+            delete freq1[char];
+            delete freq2[char];
+        } else {
+            if (!(freq1[char] in otherFreq)) otherFreq[freq1[char]] = 0;
+            otherFreq[freq1[char]]++;
+            checkFreq = true;
         }
     }
-    return Object.keys(numValues).length === 0;
+    if (!checkFreq) return true;
+    for (const char in freq2) {
+        if (!(freq2[char]) in otherFreq) return false;
+        else {
+            otherFreq[freq2[char]]--;
+            if (otherFreq[freq2[char]] === 0) delete otherFreq[freq2[char]];
+        }
+    }
+    return Object.keys(otherFreq).length === 0;
 };
