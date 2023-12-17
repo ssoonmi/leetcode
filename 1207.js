@@ -3,11 +3,15 @@
  * @return {boolean}
  */
 var uniqueOccurrences = function(arr) {
-    const count = {};
+    const freq = {};
     for (const num of arr) {
-        if (!(num in count)) count[num] = 0;
-        count[num]++;
+        if (!(num in freq)) freq[num] = 0;
+        freq[num]++;
     }
-    const values = Object.values(count);
-    return new Set(values).size === values.length;
+    const freqSet = new Set();
+    for (const num in freq) {
+        if (freqSet.has(freq[num])) return false;
+        freqSet.add(freq[num]);
+    }
+    return true;
 };
