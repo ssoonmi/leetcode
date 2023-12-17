@@ -10,11 +10,23 @@
  * @return {ListNode}
  */
 var reverseList = function(head) {
-    if (!head || !head.next) return head;
-    const prev = head;
-    const prevNext = head.next;
-    const next = reverseList(prevNext);
-    prevNext.next = prev;
-    prev.next = null;
-    return next;
+    if (!head) return head;
+    const stack = [];
+    let node = head;
+    while (node) {
+        stack.push(node);
+        node = node.next;
+    }
+    let newHead = stack.pop();
+    let prevNode = newHead;
+    while (stack.length) {
+        const node = stack.pop();
+        prevNode.next = node;
+        prevNode = node;
+        if (!stack.length) {
+            node.next = null;
+            return newHead;
+        }
+    }
+    return newHead;
 };
