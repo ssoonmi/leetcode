@@ -12,10 +12,9 @@
  */
 var goodNodes = function(root, maxVal = -Infinity) {
     if (!root) return 0;
-    let numNodes = 0;
-    if (root.val >= maxVal) numNodes++;
-    maxVal = Math.max(root.val, maxVal);
-    numNodes += goodNodes(root.left, maxVal);
-    numNodes += goodNodes(root.right, maxVal);
-    return numNodes;
+    return (
+        (root.val >= maxVal ? 1 : 0) +
+        goodNodes(root.left, Math.max(maxVal, root.val)) + 
+        goodNodes(root.right, Math.max(maxVal, root.val))
+    );
 };
