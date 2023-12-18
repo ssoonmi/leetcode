@@ -10,20 +10,15 @@
  * @return {ListNode}
  */
 var deleteMiddle = function(head) {
-    let length = 0;
-    let node = head;
-    while (node) {
-        length++;
-        node = node.next;
+    if (!head || !head.next) return null;
+    let fast = head;
+    let prevSlow = null;
+    let slow = head;
+    while (fast && fast.next) {
+        prevSlow = slow;
+        slow = slow.next;
+        fast = fast.next.next;
     }
-    let mid = Math.floor(length / 2) - 1
-    node = head;
-    while (mid > 0) {
-        mid--;
-        node = node.next;
-    }
-    let midNode = node.next;
-    if (!midNode) return null;
-    node.next = midNode.next;
+    prevSlow.next = slow.next;
     return head;
 };
