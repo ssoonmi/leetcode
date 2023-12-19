@@ -1,6 +1,33 @@
-const findMinNode = function(root) {
-    if (!root || !root.left) return root;
-    return findMinNode(root.left);
+/*
+    3
+   / \
+  2   5
+     / \
+    4   7
+       / \
+      6   8
+
+    4
+   / \
+  2   5
+       \
+        7
+       / \
+      6   8
+*/
+
+const findAndDeleteLeftMostNode = function (root) {
+    if (!root) return null;
+    if (!root.left && !root.right) return root;
+    if (!root.left) {
+        deleteNode(root, root.val);
+        return root;
+    }
+    const leftMostNode = findAndDeleteLeftMostNode(root.left);
+    if (root.left === leftMostNode) {
+        root.left = leftMostNode.right;
+    }
+    return leftMostNode;
 }
 
 /**
@@ -21,12 +48,16 @@ var deleteNode = function(root, key) {
     if (root.val === key) {
         if (!root.left) return root.right;
         if (!root.right) return root.left;
-        if (!root.right && !root.left) return null;
-        const minNode = findMinNode(root.right); // find leftmost node on the right
-        minNode.left = root.left;
-        return root.right;
+        const leftMostNode = findAndDeleteLeftMostNode(root.right);
+        if (leftMostNode !== root.right) {
+            leftMostNode.right = root.right;
+        }
+        leftMostNode.left = root.left;
+        return leftMostNode;
+    } else {
+        const leftNode = deleteNode(root.left, key);
+        if (root.left === leftNode) root.right = deleteNode(root.right, key);
+        root.left = leftNode;
+        return root;
     }
-    if (root.val > key) root.left = deleteNode(root.left, key);
-    else root.right = deleteNode(root.right, key);
-    return root;
 };
