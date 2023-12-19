@@ -1,3 +1,15 @@
+const dfs = function (root, target, stack = []) {
+    if (!root) return null;
+    stack.push(root);
+    if (root.val === target.val) return stack;
+    const left = dfs(root.left, target, stack);
+    if (left) return left;
+    const right = dfs(root.right, target, stack);
+    if (right) return right;
+    stack.pop();
+    return null;
+}
+
 /**
  * Definition for a binary tree node.
  * function TreeNode(val) {
@@ -11,31 +23,29 @@
  * @param {TreeNode} q
  * @return {TreeNode}
  */
-var lowestCommonAncestor = function(root, p, q, memo = {}) {
-    if (!root) return null;
-    let findP = p;
-    let findQ = q;
-    if (p && root.val === p.val) {
-        memo.p = root;
-        findP = null;
-    } else if (q && root.val === q.val) {
-        memo.q = root;
-        findQ = null;
-    }
-    if (findQ || findP) {
-        const left = lowestCommonAncestor(root.left, findP, findQ, memo);
-        if (left) return left;
-    }
-    if (memo.q) findQ = null;
-    if (memo.p) findP = null;
-    if (findQ || findP) {
-        const right = lowestCommonAncestor(root.right, findP, findQ, memo);
-        if (right) return right;
-    }
-    if (p && q && memo.p && memo.q) {
-        delete memo.p;
-        delete memo.q;
-        return root;
+var lowestCommonAncestor = function(root, p, q) {
+    // Simple solution:
+    // if (!root) return null;
+    // if (root === p || root === q) return root;
+    // const left = lowestCommonAncestor(root.left, p, q);
+    // const right = lowestCommonAncestor(root.right, p, q);
+    // if (left && right) return root;
+    // return left || right;
+
+    // solution using stack:
+    const stackP = dfs(root, p);
+    const stackQ = dfs(root, q);
+    if (!stackP || !stackQ) return null;
+    while (stackP.length && stackQ.length) {
+        if (stackP.length > stackQ.length) {
+            stackP.pop();
+        } else if (stackP.length < stackQ.length) {
+            stackQ.pop();
+        } else {
+            const aP = stackP.pop();
+            const aQ = stackQ.pop();
+            if (aP.val === aQ.val) return aP;
+        }
     }
     return null;
 };
