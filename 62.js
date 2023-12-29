@@ -1,15 +1,34 @@
+/*
+m = 3, n = 2
+m = 3, n = 1
+
+*/
+
 /**
  * @param {number} m
  * @param {number} n
  * @return {number}
  */
-var uniquePaths = function(m, n, x = 0, y = 0, memo = {}) {
-    if (x === m - 1 && y === n - 1) return 1;
-    if (x in memo && y in memo[x]) return memo[x][y];
-    let numPaths = 0;
-    if (x < m - 1) numPaths += uniquePaths(m, n, x + 1, y, memo);
-    if (y < n - 1) numPaths += uniquePaths(m, n, x, y + 1, memo);
-    if (!(x in memo)) memo[x] = {};
-    memo[x][y] = numPaths;
-    return memo[x][y];
+var uniquePaths = function(m, n) {
+    const table = { 1: { 1: 1 } };
+    let i = Math.max(m, n);
+    while (i >= 2) {
+        if (i <= m) {
+            table[i] = { 1: 1 };
+        }
+        if (i <= n) {
+            table[1][i] = 1;
+        }
+        i--;
+    }
+    i = 2;
+    while (i <= m) {
+        let j = 2;
+        while (j <= n) {
+            table[i][j] = table[i - 1][j] + table[i][j - 1];
+            j++;
+        }
+        i++;
+    }
+    return table[m][n];
 };
