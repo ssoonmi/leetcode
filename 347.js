@@ -4,6 +4,13 @@ sort the frequencies
 then return the value in the hashmap for the most frequent numbers
 */
 
+/*
+Solve with a max heap:
+- create a map of all the numbers to frequencies
+- heapify the frequencies and the numbers by frequency: O(n) time complexity
+- pull k most frequent elements out of the heap and return the numbers
+*/
+
 /**
  * @param {number[]} nums
  * @param {number} k
