@@ -61,7 +61,15 @@ var maxSlidingWindow = function(nums, k) {
         freq[prevIVal]--;
         if (freq[prevIVal] === 0) delete freq[prevIVal];
         if (prevIVal === maxValue && !(prevIVal in freq)) {
+            // O(n2) solution:
             maxValue = Math.max(...Object.keys(freq));
+            // Optimal: O(n) solution (didn't get it in the time limit)
+            // maxValue = -Infinity;
+            // let k = i + 1;
+            // while (k <= j + 1) {
+            //     maxValue = Math.max(nums[k], maxValue);
+            //     k++;
+            // }
         }
         res.push(maxValue);
         j++;
