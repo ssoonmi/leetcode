@@ -63,8 +63,6 @@ var maxPathSum = function(root) {
             root.val + leftSum,
             root.val + rightSum,
             root.val + leftSum + rightSum,
-            leftSum,
-            rightSum,
         );
         return Math.max(
             root.val,
