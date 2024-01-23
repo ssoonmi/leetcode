@@ -1,6 +1,48 @@
+/**
+10:24am-10:35pm
+implement a trie
+efficiently store and retrieve keys in a dataset of strings
+autocomplete/spellchecker
 
+insert(word) inserts the word into the trie
+search(word) returns true if the word is in the trie, false otherwise
+startsWith(prefix) returns true if there is a word in the trie that has the
+prefix, false otherwise
+
+start
+starts
+store
+search
+          s
+       /    \
+      t     e
+     / \    |
+    a   o   a
+    |   |   |
+    r   r   r
+    |   |   |
+->  t ->e   c
+    |       |
+->  s     ->h
+
+hash map where the key is the letter and the value is another hash map that
+stores the next letters that could potentially match as children
+{t: { isWord: true, s: { isWord: true } }}
+
+insert:
+O(w) time complexity where w is the word length
+O(w) space complexity
+
+search:
+O(w) time complexity where w is the word length
+O(1) space complexity
+
+startsWith:
+O(w) time complexity where w is the prefix length
+O(1) space complexity
+*/
 var Trie = function() {
-    this.root = {};
+    this.map = {};
 };
 
 /** 
@@ -8,12 +50,12 @@ var Trie = function() {
  * @return {void}
  */
 Trie.prototype.insert = function(word) {
-    let node = this.root;
+    let curr = this.map;
     for (const char of word) {
-        if (!(char in node)) node[char] = {};
-        node = node[char];
+        if (!(char in curr)) curr[char] = {};
+        curr = curr[char];
     }
-    node.isWord = true;
+    curr.isWord = true;
 };
 
 /** 
@@ -21,12 +63,12 @@ Trie.prototype.insert = function(word) {
  * @return {boolean}
  */
 Trie.prototype.search = function(word) {
-    let node = this.root;
+    let curr = this.map;
     for (const char of word) {
-        if (char in node) node = node[char];
-        else return false;
+        if (!(char in curr)) return false;
+        curr = curr[char];
     }
-    return !!node.isWord;
+    return !!curr.isWord;
 };
 
 /** 
@@ -34,10 +76,10 @@ Trie.prototype.search = function(word) {
  * @return {boolean}
  */
 Trie.prototype.startsWith = function(prefix) {
-    let node = this.root;
+    let curr = this.map;
     for (const char of prefix) {
-        if (char in node) node = node[char];
-        else return false;
+        if (!(char in curr)) return false;
+        curr = curr[char];
     }
     return true;
 };
