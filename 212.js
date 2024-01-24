@@ -35,21 +35,20 @@ does the order matter in the result words returned? no
  */
 var findWords = function(board, words) {
     const res = [];
+    const trie = {};
     for (let i = 0; i < words.length; i++) {
         const word = words[i];
-        let found = false;
-        for (let row = 0; row < board.length; row++) {
-            for (let col = 0; col < board[0].length; col++) {
-                const cell = board[row][col];
-                let j = 0;
-                const char = word[j];
-                if (cell === char && traverse(board, row, col, word, j)) {
-                    res.push(word);
-                    found = true;
-                    break;
-                }
-            }
-            if (found) break;
+        let curr = trie;
+        for (const char of word) {
+            if (!(char in curr)) curr[char] = {};
+            curr = curr[char];
+        }
+        if (!curr.numMatches) curr.numMatches = 0;
+        curr.numMatches++;
+    }
+    for (let row = 0; row < board.length; row++) {
+        for (let col = 0; col < board[0].length; col++) {
+            traverse(board, row, col, trie, res);
         }
     }
     return res;
@@ -62,19 +61,29 @@ const DIRS = [
     [0, -1],
 ];
 
-function traverse(board, row, col, word, j, visiting = new Set()) {
-    if (j >= word.length) return true;
-    if (visiting.has(`${row}-${col}`)) return false;
+function traverse(board, row, col, trie, res, word = '') {
     if (row < 0 || row >= board.length || col < 0 || col >= board[0].length) {
-        return false;
+        return;
     }
-    if (word[j] !== board[row][col]) return false;
-    visiting.add(`${row}-${col}`);
-    for (const [rowD, colD] of DIRS) {
-        if (traverse(board, row + rowD, col + colD, word, j + 1, visiting)) {
-            return true;
+    if (board[row][col] === '.') return;
+    for (const char in trie) {
+        if (board[row][col] === char) {
+            board[row][col] = '.';
+            word += char;
+            if (trie[char].numMatches) {
+                trie[char].numMatches--;
+                if (trie[char].numMatches === 0 && Object.keys(trie[char]).length === 1) {
+                    delete trie[char];
+                }
+                res.push(word);
+            }
+            if (char in trie) {
+                for (const [rowD, colD] of DIRS) {
+                    traverse(board, row + rowD, col + colD, trie[char], res, word);
+                }
+            }
+            board[row][col] = char;
+            return;
         }
     }
-    visiting.delete(`${row}-${col}`);
-    return false;
 }
