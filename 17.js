@@ -18,7 +18,7 @@ example:
 time complexity:
 O(n*4^n) where n is the number of digits in the sequence
 space complexity:
-O(4^n)
+O(n) (best case)
 */
 
 const DIGIT_TO_LETTERS = {
