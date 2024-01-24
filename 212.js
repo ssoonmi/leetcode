@@ -65,25 +65,23 @@ function traverse(board, row, col, trie, res, word = '') {
     if (row < 0 || row >= board.length || col < 0 || col >= board[0].length) {
         return;
     }
-    if (board[row][col] === '.') return;
-    for (const char in trie) {
-        if (board[row][col] === char) {
-            board[row][col] = '.';
-            word += char;
-            if (trie[char].numMatches) {
-                trie[char].numMatches--;
-                if (trie[char].numMatches === 0 && Object.keys(trie[char]).length === 1) {
-                    delete trie[char];
-                }
-                res.push(word);
+    const char = board[row][col];
+    if (char === '.') return;
+    if (char in trie) {
+        board[row][col] = '.';
+        word += char;
+        if (trie[char].numMatches) {
+            trie[char].numMatches--;
+            if (trie[char].numMatches === 0 && Object.keys(trie[char]).length === 1) {
+                delete trie[char];
             }
-            if (char in trie) {
-                for (const [rowD, colD] of DIRS) {
-                    traverse(board, row + rowD, col + colD, trie[char], res, word);
-                }
-            }
-            board[row][col] = char;
-            return;
+            res.push(word);
         }
+        if (char in trie) {
+            for (const [rowD, colD] of DIRS) {
+                traverse(board, row + rowD, col + colD, trie[char], res, word);
+            }
+        }
+        board[row][col] = char;
     }
 }
