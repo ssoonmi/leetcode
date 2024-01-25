@@ -1,9 +1,16 @@
-const DIRS = [
-    [1, 0],
-    [-1, 0],
-    [0, 1],
-    [0, -1],
-];
+/*
+11:20pm-11:32pm
+inputs:
+m x n grid with 0 - empty cell, 1 - fresh orange, 2 - rotten orange
+
+number of minutes until no cell has a fresh orange
+maximum distance for rotten orange to touch a fresh orange
+
+breadth first traversal from each rotten orange
+put all the rotten oranges in a queue
+and bfs from all rotten oranges to adjacent cells to convert fresh oranges
+once there are no more fresh oranges, then we can return the depth of the bfs
+*/
 
 /**
  * @param {number[][]} grid
@@ -11,31 +18,32 @@ const DIRS = [
  */
 var orangesRotting = function(grid) {
     const queue = [];
-    let numFreshOranges = 0;
-    for (const row in grid) {
-        for (const col in grid[row]) {
-            if (grid[row][col] === 2) {
-                queue.push([Number(row), Number(col), 0]);
-                numFreshOranges++;
-            } else if (grid[row][col] === 1) {
-                numFreshOranges++;
+    let orangeCount = 0;
+    for (let row = 0; row < grid.length; row++) {
+        for (let col = 0; col < grid[0].length; col++) {
+            const cell = grid[row][col];
+            if (cell === 2) {
+                queue.push([row, col, 0]);
+                orangeCount++;
+            }
+            if (cell === 1) {
+                orangeCount++;
             }
         }
     }
-    let maxMins = 0;
+    let maxMin = 0;
     while (queue.length) {
-        const [row, col, mins] = queue.shift();
-        if (mins !== 0 && grid[row][col] !== 1) continue;
+        const [row, col, min] = queue.shift();
+        if (row < 0 || row >= grid.length || col < 0 || col >= grid[0].length) continue;
+        if (grid[row][col] !== 1 && min !== 0) continue;
+        // add neighboring cells to queue
+        orangeCount--;
         grid[row][col] = 2;
-        numFreshOranges--;
-        maxMins = mins;
-        for (const [rowD, colD] of DIRS) {
-            const newRow = rowD + row;
-            const newCol = colD + col;
-            if (!(newRow in grid) || !(newCol in grid[newRow])) continue;
-            if (grid[newRow][newCol] !== 1) continue;
-            queue.push([newRow, newCol, mins + 1]);
-        }
+        maxMin = Math.max(min, maxMin);
+        queue.push([row + 1, col, min + 1]);
+        queue.push([row - 1, col, min + 1]);
+        queue.push([row, col + 1, min + 1]);
+        queue.push([row, col - 1, min + 1]);
     }
-    return numFreshOranges === 0 ? maxMins : -1;
+    return orangeCount === 0 ? maxMin : -1;
 };
