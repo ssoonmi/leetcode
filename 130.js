@@ -30,15 +30,14 @@ O(m * n)
  * @return {void} Do not return anything, modify board in-place instead.
  */
 var solve = function(board) {
-    const noCapture = new Set();
     function dfs(row, col) {
         if (row < 0 || row >= board.length || col < 0 || col >= board[0].length) {
             return;
         }
         const cell = board[row][col];
         if (cell === 'X') return;
-        if (noCapture.has(`${row}-${col}`)) return true;
-        noCapture.add(`${row}-${col}`);
+        if (cell === 'N') return;
+        board[row][col] = 'N';
         dfs(row + 1, col);
         dfs(row - 1, col);
         dfs(row, col + 1);
@@ -54,10 +53,8 @@ var solve = function(board) {
     }
     for (let row = 0; row < board.length; row++) {
         for (let col = 0; col < board[0].length; col++) {
-            if (
-                board[row][col] === 'O' &&
-                !noCapture.has(`${row}-${col}`)
-            ) board[row][col] = 'X';
+            if (board[row][col] === 'O') board[row][col] = 'X';
+            if (board[row][col] === 'N') board[row][col] = 'O';
         }
     }
     return board;
