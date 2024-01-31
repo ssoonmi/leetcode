@@ -19,6 +19,9 @@ keep track of the first occurence of each letter in a hash map
 keep a stack of all the lengths when iterating of the longest partitions
 pop off the stack if the starting number of a letter is greater than the length
 push the ending number of the letter to the stack
+
+time complexity: O(n) where n is length of the string
+space complexity: O(c) where c is the number of letters available in the string
 */
 
 /**
