@@ -27,9 +27,6 @@ return true if length of left stack is 0 OR end of star stack is greater than en
     i
 left = [1]
 stars = [0]
-
-time complexity: O(n) where n is the length of the string
-space complexity: O(s) where s is the length of the string
 */
 
 /**
@@ -37,26 +34,22 @@ space complexity: O(s) where s is the length of the string
  * @return {boolean}
  */
 var checkValidString = function(s) {
-    const leftStack = [];
-    const starStack = [];
+    let leftMin = 0;
+    let leftMax = 0;
     for (let i = 0; i < s.length; i++) {
         const char = s[i];
-        if (char === '(') leftStack.push(i);
-        else if (char === '*') starStack.push(i);
-        else {
-            if (!leftStack.length && !starStack.length) return false;
-            else if (leftStack.length) leftStack.pop();
-            else if (starStack.length) starStack.pop();
+        if (char === '(') {
+            leftMax++;
+            leftMin++;
+        } else if (char === ')') {
+            leftMin--;
+            leftMax--;
+        } else {
+            leftMin--;
+            leftMax++;
         }
+        if (leftMin < 0) leftMin = 0;
+        if (leftMax < 0) return false;
     }
-    if (!leftStack.length) return true;
-    while (leftStack.length) {
-        if (
-            !starStack.length ||
-            starStack[starStack.length - 1] < leftStack[leftStack.length - 1]
-        ) return false;
-        leftStack.pop();
-        starStack.pop();
-    }
-    return true;
+    return leftMin === 0;
 };
