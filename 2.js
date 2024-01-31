@@ -1,30 +1,28 @@
 /*
-10:28pm - 10:49pm
-2 non-empty linked lists representing two non-negative integers
+2:58pm-3:05pm
 
+two non-empty linked lists representing non-negative integers
 digits are stored in reverse order
 each node contains a single digit
+add the two numbers and return sum as a linked list
 
-add the two numbers as a linked list
+no leading zeros except the number 0 itself
 
-return the sum as a linked list
+2 -> 4 -> 3 -> 1
+5 -> 6 -> 6
+output:
+7 -> 0 -> 0 -> 2
 
-the two numbers don't contain any leading zeros
+for each position in the linked lists:
+add the two node values, keep track of a carry over
+if sum is greater than 10, negate the sum by 10 and assign carry over to 1
+otherwise assign carry over to 0
+create a new node with the sum value and add it to the tail of the new linked list
 
-example: 1 -> 6 -> 9    9 -> 5
-         961            59
-         sum = 1020
-         0 -> 2 -> 0 -> 1
-
-iterate through the linked list to figure out what the numbers are
-sum up the numbers (turn into a string)
-iterate through the sum numbers string and turn each digit into a new node and add it to the new linked list
-
-O(max(n + m)) time complexity where n is the length of the first linked list and m is the length of the second
-O(max(n + m)) space complexity
-
-questions I should have asked: how big can the linked lists get?
-After 20 zeros in JavaScript, you have to use BigInt to convert strings into numbers and vice versa
+time complexity:
+O(n) where n is the longest linked list
+space complexity:
+O(1)
 */
 
 /**
@@ -40,27 +38,25 @@ After 20 zeros in JavaScript, you have to use BigInt to convert strings into num
  * @return {ListNode}
  */
 var addTwoNumbers = function(l1, l2) {
-    let num1 = []; // 1, 6, 9
-    let num2 = [];
-    // 1 -> 6 -> 9
-    while (l1 || l2) {
+    const head = new ListNode();
+    let curr = head;
+    let carry = 0;
+    while (l1 || l2 || carry) {
+        let sum = carry;
         if (l1) {
-            num1.push(l1.val);
+            sum += l1.val;
             l1 = l1.next;
         }
         if (l2) {
-            num2.push(l2.val);
+            sum += l2.val;
             l2 = l2.next;
         }
-    }
-    const sum = BigInt(num1.reverse().join('')) + BigInt(num2.reverse().join(''));
-    const sumStr = sum.toString();
-    let head = new ListNode();
-    let curr = head;
-    for (let i = sumStr.length - 1; i >= 0; i--) {
-        const node = new ListNode(sumStr[i]);
-        curr.next = node;
-        curr = node;
+        if (sum >= 10) {
+            sum -= 10;
+            carry = 1;
+        } else carry = 0;
+        curr.next = new ListNode(sum);
+        curr = curr.next;
     }
     return head.next;
 };
