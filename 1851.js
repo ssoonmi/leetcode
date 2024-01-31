@@ -11,8 +11,17 @@ intervals = [[1,4],[2,4],[3,6],[4,4]]
 queries = [2,3,4,5]
 output = [3,3,1,4]
 
+worst case:
+time complexity:
 O(q * n) n where n is the number of intervals and q is the number of queries
-O(1) space
+space complexity:
+O(1)
+
+best case:
+time complexity:
+O(nlogn + qlogq) where n is the num of intervals and q is the num of queries
+space complexity:
+O(q + n)
 */
 
 class MinHeap {
@@ -98,20 +107,12 @@ var minInterval = function(intervals, queries) {
     for(let j = 0; j < queryIdxs.length; j++) {
         const queryIdx = queryIdxs[j];
         const query = queries[queryIdx];
-        while (
-            i < intervals.length &&
-            !(intervals[i][0] > query)
-        ) {
+        while (i < intervals.length && !(intervals[i][0] > query)) {
             const [start, end] = intervals[i];
-            if (start <= query && end >= query) {
-                minHeap.push([end - start + 1, end]);
-            }
+            minHeap.push([end - start + 1, end]);
             i++;
         }
-        while (
-            minHeap.size() &&
-            minHeap.peek()[1] < query
-        ) {
+        while (minHeap.size() && minHeap.peek()[1] < query) {
             minHeap.pop();
         }
         output[queryIdx] = minHeap.size() ? minHeap.peek()[0] : -1;
