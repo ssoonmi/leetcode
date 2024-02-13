@@ -5,16 +5,14 @@
  */
 var removeElement = function(nums, val) {
     let i = 0;
-    let j = nums.length - 1;
-    while (i < j) {
-        if (nums[i] === val) {
-            while (i < j && nums[j] === val) {
-                j--;
-            }
+    let j = 0;
+    while (j < nums.length) {
+        if (nums[j] !== val) {
             nums[i] = nums[j];
-            j--;
+            i++;
         }
-        if (i < j) i++;
+        j++;
     }
-    return nums[i] === val ? i : i + 1;
+    nums.length = i;
+    return i;
 };
